@@ -1,4 +1,5 @@
 import os
+import pwd
 
 from fabric.api import env, local, run, settings, sudo
 
@@ -16,7 +17,7 @@ class Command(ServerManagementBaseCommand):
             # Create a final dump of the database
             local('pg_dump {name} -cOx -U {user} -f ~/{name}.sql --clean'.format(
                 name=config['local']['database']['name'],
-                user=os.getlogin()
+                user=pwd.getpwuid(os.geteuid())[0],
             ))
 
             # Push the database from earlier up to the server
